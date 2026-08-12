@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>各類場所消防安全設備設置檢討（互動精靈）</title>
+    <title>各類場所消防安全設備設置檢討（專案實務精靈）</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -42,7 +42,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1050px;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -271,6 +271,35 @@
         input[type="number"]:focus {
             border-color: var(--accent-blue);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        /* Sub-panel for basement details */
+        .sub-panel {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .sub-panel.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sub-panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent-blue);
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 0.5rem;
         }
 
         /* Toggle switches */
@@ -560,7 +589,7 @@
     <div class="container">
         <header>
             <h1>各類場所消防安全設備設置檢討</h1>
-            <p>循序引導檢討模式（Wizard Mode）</p>
+            <p>實務精緻檢討精靈（地下室、電梯乘場、機電空間複合檢索版）</p>
         </header>
 
         <!-- Progress bar -->
@@ -570,19 +599,19 @@
             </div>
             <div class="progress-step active" id="p-step-1">
                 <div class="step-circle">1</div>
-                <div class="step-text">場所用途</div>
+                <div class="step-text">地上主要用途</div>
             </div>
             <div class="progress-step" id="p-step-2">
                 <div class="step-circle">2</div>
-                <div class="step-text">高度與層數</div>
+                <div class="step-text">高度與層數配置</div>
             </div>
             <div class="progress-step" id="p-step-3">
                 <div class="step-circle">3</div>
-                <div class="step-text">樓板面積</div>
+                <div class="step-text">面積與開口條件</div>
             </div>
             <div class="progress-step" id="p-step-4">
                 <div class="step-circle">4</div>
-                <div class="step-text">檢討報告</div>
+                <div class="step-text">產出檢討報告</div>
             </div>
         </div>
 
@@ -590,7 +619,7 @@
         <div class="wizard-card active" id="step-card-1">
             <h2 class="card-title">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                第一步：選擇場所用途類別
+                第一步：選擇地上層主要用途類別
             </h2>
             <p class="toggle-desc" style="margin-bottom: 1.5rem;">法規（§12）依據場所火災風險與避難難度進行分類，這將決定後續所有設備的面積門檻。</p>
 
@@ -627,7 +656,7 @@
             <div class="nav-actions">
                 <div></div> <!-- Empty spacer -->
                 <button class="btn btn-primary" onclick="goToStep(2)">
-                    下一步：高度與層數
+                    下一步：高度與層數配置
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </button>
             </div>
@@ -637,7 +666,7 @@
         <div class="wizard-card" id="step-card-2">
             <h2 class="card-title">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                第二步：建築物高度與層數
+                第二步：建築物高度與層數配置
             </h2>
             <p class="toggle-desc" style="margin-bottom: 1.5rem;">高度與層數會直接觸發如連結送水管、自動撒水、以及緊急電源插座等高層或中高層專屬消防搶救設備。</p>
 
@@ -656,6 +685,49 @@
                 <input type="number" id="input-basements" value="1" min="0" oninput="checkStep2Feedback()">
             </div>
 
+            <!-- Basement Configuration Panel (Dynamically shown if basements > 0) -->
+            <div class="sub-panel" id="basement-panel">
+                <h3 class="sub-panel-title">🏠 地下室空間細部配置檢討</h3>
+                
+                <div class="toggle-group" onclick="toggleBasementParking()">
+                    <div class="toggle-label">
+                        <span class="toggle-title">地下室設有「停車空間 / 車庫」</span>
+                        <span class="toggle-desc">將觸發丁類場所防護設備檢討</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="basement-has-parking" onchange="toggleParkingAreaInput(event)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="form-group" id="parking-area-group" style="display: none; margin-top: 1rem;">
+                    <label for="input-parking-area">地下室停車空間總面積 (平方公尺)</label>
+                    <input type="number" id="input-parking-area" value="250" min="1" oninput="checkStep2Feedback()">
+                </div>
+
+                <div class="toggle-group" onclick="toggleCheckbox('basement-has-mep')">
+                    <div class="toggle-label">
+                        <span class="toggle-title">地下室設有「機電空間」</span>
+                        <span class="toggle-desc">如發電機房、變電室等，需檢討專用氣體/水霧滅火與防火區劃</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="basement-has-mep" onchange="checkStep2Feedback(event)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="toggle-group" onclick="toggleCheckbox('has-elevator-lobby')">
+                    <div class="toggle-label">
+                        <span class="toggle-title">設有「緊急昇降機」或「特別安全梯」乘場/梯廳</span>
+                        <span class="toggle-desc">乘場間依法需設置專用排煙或加壓送風設備（§188）</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="has-elevator-lobby" onchange="checkStep2Feedback(event)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
             <div class="feedback-card" id="step-2-feedback">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                 <div class="feedback-text" id="step-2-feedback-text">
@@ -669,7 +741,7 @@
                     上一步
                 </button>
                 <button class="btn btn-primary" onclick="goToStep(3)">
-                    下一步：面積與開口
+                    下一步：面積與開口條件
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </button>
             </div>
@@ -679,9 +751,9 @@
         <div class="wizard-card" id="step-card-3">
             <h2 class="card-title">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
-                第三步：樓地板面積與開口狀態
+                第三步：樓地板面積與開口條件
             </h2>
-            <p class="toggle-desc" style="margin-bottom: 1.5rem;">這是最後一步。我們將進行面積量體檢討，若設有地下層或「無窗戶層」，許多設備的免設門檻會大幅降低。</p>
+            <p class="toggle-desc" style="margin-bottom: 1.5rem;">這是最後一步。我們將進行面積量體檢討，若設有地下室或「無窗戶層」，許多設備的免設門檻會大幅降低。</p>
 
             <div class="form-group">
                 <label for="input-total-area">總樓地板面積 (平方公尺)</label>
@@ -783,19 +855,79 @@
             checkStep3Feedback();
         }
 
-        function checkStep2Feedback() {
+        function toggleBasementParking() {
+            const cb = document.getElementById('basement-has-parking');
+            cb.checked = !cb.checked;
+            toggleParkingAreaInput();
+        }
+
+        function toggleParkingAreaInput(event) {
+            if (event) event.stopPropagation();
+            const cb = document.getElementById('basement-has-parking');
+            const group = document.getElementById('parking-area-group');
+            if (cb.checked) {
+                group.style.display = 'block';
+            } else {
+                group.style.display = 'none';
+            }
+            checkStep2Feedback();
+        }
+
+        function toggleCheckbox(id) {
+            const cb = document.getElementById(id);
+            cb.checked = !cb.checked;
+            checkStep2Feedback();
+        }
+
+        function checkStep2Feedback(event) {
+            if (event) event.stopPropagation();
             const height = parseFloat(document.getElementById('input-height').value) || 0;
             const stories = parseInt(document.getElementById('input-stories').value) || 0;
             const basements = parseInt(document.getElementById('input-basements').value) || 0;
+            
+            const basementPanel = document.getElementById('basement-panel');
             const feedbackText = document.getElementById('step-2-feedback-text');
             const feedbackCard = document.getElementById('step-2-feedback');
 
+            // Basement sub-panel visibility
+            if (basements > 0) {
+                basementPanel.classList.add('active');
+            } else {
+                basementPanel.classList.remove('active');
+            }
+
+            // Generate live feedbacks
+            const alerts = [];
+            const hasParking = document.getElementById('basement-has-parking').checked;
+            const parkingArea = parseFloat(document.getElementById('input-parking-area').value) || 0;
+            const hasMep = document.getElementById('basement-has-mep').checked;
+            const hasElevatorLobby = document.getElementById('has-elevator-lobby').checked;
+
             if (stories >= 11 || height > 31) {
-                feedbackCard.className = "feedback-card warning";
-                feedbackText.innerHTML = `<strong>高層建築警報！</strong>樓層達 ${stories} 層且高度達 ${height} 公尺。自動撒水設備（第 17 條）與緊急電源插座（第 190 條）將被自動篩選為「強制設置」。`;
+                alerts.push(`<strong>高層建築警報：</strong>樓層達 ${stories} 層且高度達 ${height} 公尺。自動撒水設備（第 17 條）與緊急電源插座（第 190 條）將被自動篩選為「強制設置」。`);
             } else if (stories >= 6) {
+                alerts.push(`<strong>中高層建物：</strong>地上樓層數達 ${stories} 層，室內消防栓設備（第 15 條）與連結送水管將被自動啟用。`);
+            }
+
+            if (basements > 0) {
+                if (hasParking) {
+                    if (parkingArea >= 200) {
+                        alerts.push(`<strong>地下室停車檢討：</strong>停車面積達 ${parkingArea} m²（大於 200 m² 門檻），將強制設置【泡沫滅火設備】（第 18 條）。`);
+                    } else {
+                        alerts.push(`地下車庫面積 ${parkingArea} m² 未滿 200 m²，免設泡沫滅火設備。`);
+                    }
+                }
+                if (hasMep) {
+                    alerts.push(`<strong>機電防護：</strong>設有機電空間，機房將強制檢討設置專用二氧化碳、乾粉或水霧滅火系統（第 18 條）以及防火區劃。`);
+                }
+                if (hasElevatorLobby) {
+                    alerts.push(`<strong>乘場防排煙：</strong>設有緊急昇降機間/特別安全梯乘場，強制增設專用排煙或加壓送風設備（第 188 條）。`);
+                }
+            }
+
+            if (alerts.length > 0) {
                 feedbackCard.className = "feedback-card warning";
-                feedbackText.innerHTML = `<strong>中高層建物：</strong>地上樓層數達 ${stories} 層，已越過 6 層樓門檻。室內消防栓設備（第 15 條）與連結送水管將被自動啟用。`;
+                feedbackText.innerHTML = alerts.join('<br><br>');
             } else {
                 feedbackCard.className = "feedback-card";
                 feedbackText.innerHTML = `層數為地上 ${stories} 層、地下 ${basements} 層，高度為 ${height} 公尺。符合一般中低層建物規範，核心消防栓及報警設備將由第三步的樓地板面積判定。`;
@@ -803,7 +935,7 @@
         }
 
         function checkStep3Feedback(event) {
-            if (event) event.stopPropagation(); // Prevent trigger recursion on checkbox container click
+            if (event) event.stopPropagation(); // Prevent trigger recursion
             const totalArea = parseFloat(document.getElementById('input-total-area').value) || 0;
             const isWindowless = document.getElementById('input-is-windowless').checked;
             const feedbackText = document.getElementById('step-3-feedback-text');
@@ -855,6 +987,11 @@
             const specArea = parseFloat(document.getElementById('input-spec-area').value) || 0;
             const isWindowless = document.getElementById('input-is-windowless').checked;
 
+            const hasParking = document.getElementById('basement-has-parking').checked;
+            const parkingArea = parseFloat(document.getElementById('input-parking-area').value) || 0;
+            const hasMep = document.getElementById('basement-has-mep').checked;
+            const hasElevatorLobby = document.getElementById('has-elevator-lobby').checked;
+
             const results = [];
             const flowTrail = [];
 
@@ -864,7 +1001,7 @@
             if (selectedClass === 'class-b') classZH = '乙類 (一般場所)';
             if (selectedClass === 'class-c') classZH = '丙類 (工業場所)';
             if (selectedClass === 'class-d') classZH = '丁類 (車庫場所)';
-            flowTrail.push({ text: `場所類別篩選：選定為「${classZH}」，自動載入對應之法規級距基準。`, type: 'success' });
+            flowTrail.push({ text: `場所用途類別：選定為「${classZH}」，自動載入對應之法規級距基準。`, type: 'success' });
 
             // 2. Height Log
             if (stories >= 11 || height > 31) {
@@ -873,7 +1010,16 @@
                 flowTrail.push({ text: `高度檢討：高度為 ${height} 公尺，未越過高層建築 (31m / 11層) 臨界點。`, type: 'success' });
             }
 
-            // 3. Extinguisher (滅火器)
+            // 3. Basement Space Configuration
+            if (basements > 0) {
+                let configZH = [];
+                if (hasParking) configZH.push(`車庫 (${parkingArea}m²)`);
+                if (hasMep) configZH.push('機電空間');
+                if (hasElevatorLobby) configZH.push('特別安全梯/緊急昇降機間');
+                flowTrail.push({ text: `地下室配置檢討：含地下室 ${basements} 層，內含空間用途為：${configZH.join('、') || '無特別用途'}。`, type: 'warning' });
+            }
+
+            // 4. Extinguisher (滅火器)
             let extReq = false;
             let extReason = '';
             if (selectedClass === 'class-a') {
@@ -890,7 +1036,7 @@
             }
             results.push({ name: '滅火器', required: extReq, reason: extReason, code: '第 14 條' });
 
-            // 4. Indoor Fire Hydrant (室內消防栓)
+            // 5. Indoor Fire Hydrant (室內消防栓)
             let hydReq = false;
             let hydReason = '';
             if (stories >= 6) {
@@ -916,7 +1062,7 @@
             }
             results.push({ name: '室內消防栓設備', required: hydReq, reason: hydReason, code: '第 15 條' });
 
-            // 5. Automatic Sprinkler (自動撒水)
+            // 6. Automatic Sprinkler (自動撒水)
             let spReq = false;
             let spReason = '';
             if (stories >= 11 || height > 31) {
@@ -939,7 +1085,7 @@
             }
             results.push({ name: '自動撒水設備', required: spReq, reason: spReason, code: '第 17 條' });
 
-            // 6. Automatic Fire Alarm (火警自動警報)
+            // 7. Automatic Fire Alarm (火警自動警報)
             let alReq = false;
             let alReason = '';
             if (selectedClass === 'class-a' && (totalArea >= 150 || (isWindowless && totalArea >= 75))) {
@@ -956,7 +1102,7 @@
             }
             results.push({ name: '火警自動警報設備', required: alReq, reason: alReason, code: '第 19 條' });
 
-            // 7. Smoke Exhaust (排煙設備)
+            // 8. Smoke Exhaust (排煙設備 - 一般空間)
             let smReq = false;
             let smReason = '';
             if (selectedClass === 'class-a' && specArea >= 300) {
@@ -971,9 +1117,9 @@
             } else {
                 smReason = '未達排煙分區面積或無窗戶層起設門檻。';
             }
-            results.push({ name: '排煙設備', required: smReq, reason: smReason, code: '第 188 條' });
+            results.push({ name: '排煙設備 (居室/通道)', required: smReq, reason: smReason, code: '第 188 條' });
 
-            // 8. Emergency Outlets (緊急電源插座)
+            // 9. Emergency Outlets (緊急電源插座)
             let eoReq = false;
             let eoReason = '';
             if (stories >= 11) {
@@ -984,18 +1130,40 @@
             }
             results.push({ name: '緊急電源插座', required: eoReq, reason: eoReason, code: '第 190 條' });
 
-            // 9. Foam Extinguishing (泡沫滅火系統 - 針對車庫)
+            // 10. Foam Extinguishing (泡沫滅火設備 - 地下車庫)
             let foamReq = false;
             let foamReason = '';
-            if (selectedClass === 'class-d' && totalArea >= 200) {
+            if (basements > 0 && hasParking && parkingArea >= 200) {
                 foamReq = true;
-                foamReason = '屬丁類場所（車庫/停車場）且總面積超過 200 m²。';
-            } else if (selectedClass === 'class-d') {
-                foamReason = `屬丁類車庫但總面積 ${totalArea} m² 未滿 200 m²。`;
+                foamReason = `地下室設有車庫且停車面積達 ${parkingArea} m² (達 200 m² 以上強制設置)。`;
+            } else if (basements > 0 && hasParking) {
+                foamReason = `地下室設有車庫但面積 ${parkingArea} m² 未達 200 m²。`;
             } else {
-                foamReason = '非屬丁類車庫或飛機庫，免檢討此項目。';
+                foamReason = '無地下室車庫，免設置泡沫系統。';
             }
-            results.push({ name: '泡沫滅火設備', required: foamReq, reason: foamReason, code: '第 18 條' });
+            results.push({ name: '泡沫滅火設備 (地下車庫)', required: foamReq, reason: foamReason, code: '第 18 條' });
+
+            // 11. Special Staircase/Elevator Lobby Smoke Exhaust (特別安全梯或緊急昇降機間排煙)
+            let elSmReq = false;
+            let elSmReason = '';
+            if (basements > 0 && hasElevatorLobby) {
+                elSmReq = true;
+                elSmReason = '設有特別安全梯或緊急昇降機乘場，該乘場間依法應設專用排煙或加壓送風設備。';
+            } else {
+                elSmReason = '未設有此特定安全梯廳或緊急昇降機乘場。';
+            }
+            results.push({ name: '特別安全梯/緊急昇降機間排煙設備', required: elSmReq, reason: elSmReason, code: '第 188 條第一項第四款' });
+
+            // 12. Gas Extinguishing (機電室專用氣體滅火)
+            let gasReq = false;
+            let gasReason = '';
+            if (basements > 0 && hasMep) {
+                gasReq = true;
+                gasReason = '地下室設有機電空間，應檢討設置二氧化碳、乾粉或水霧滅火系統以保護機電盤櫃。';
+            } else {
+                gasReason = '無申報地下機電空間。';
+            }
+            results.push({ name: '機房氣體滅火系統', required: gasReq, reason: gasReason, code: '第 18 條' });
 
             // Output audit path
             results.forEach(res => {
