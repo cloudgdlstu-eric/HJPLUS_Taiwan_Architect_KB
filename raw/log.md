@@ -4,6 +4,10 @@
 `README.md` 的「最近更新」區塊是同一份歷史的人類閱讀版本。
 兩者都由維護者在合併 PR 後更新，日期標題必須是 ISO 8601 `YYYY-MM-DD`，最新在最上面。
 
+## 2026-08-12
+
+- **Creation**: 新增 `建築法規/消防安全/灑水與泡沫滅火系統配管檢討/sprinkler-foam-piping-review`——自動撒水與泡沫滅火配管管徑及噴頭數量檢討技能，涵蓋配管管徑與撒水頭數對照表、支管8顆限制及泡沫放射分區。
+
 ## 2026-08-07
 
 - **Creation**: 新增 `建築施工與材料/綠建材/綠建材檢索與選用工具/green-material-search-toolkit`——TABC 綠建材本機檢索平台與選用說明書產生器（[#47](https://github.com/h30190/HJPLUS_Taiwan_Architect_KB/pull/47)）。TABC 認證資料與使用者成品刻意不隨庫散布（授權不相容），由技能層 `.gitignore` 擋下，首次使用依 SKILL.md「Setup」於本機取得或重新抓取。合併後由維護者補上 OKF `type` frontmatter。
