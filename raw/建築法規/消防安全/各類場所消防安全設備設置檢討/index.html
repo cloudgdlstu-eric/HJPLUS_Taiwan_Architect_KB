@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>各類場所消防安全設備設置檢討工具</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-blue: #3b82f6;
+            --border-color: #475569;
+            --font-main: 'Outfit', 'Noto Sans TC', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ef4444, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            -webkit-text-fill-color: initial;
+            font-size: 1.1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 900px) {
+            .grid {
+                grid-template-columns: 450px 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-input);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            accent-color: var(--accent-blue);
+        }
+
+        button.btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            border: none;
+            font-family: var(--font-main);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button.btn-primary {
+            background: linear-gradient(135deg, var(--accent-red), #f43f5e);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        button.btn-primary:hover {
+            opacity: 0.95;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+        }
+
+        /* Results Area styling */
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .results-placeholder {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .results-placeholder svg {
+            width: 80px;
+            height: 80px;
+            stroke: var(--text-secondary);
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        .equip-card {
+            background-color: rgba(255, 255, 255, 0.02);
+            border-left: 5px solid var(--text-secondary);
+            padding: 1.25rem;
+            border-radius: 4px 8px 8px 4px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-left-color 0.3s;
+        }
+
+        .equip-card.required {
+            border-left-color: var(--accent-red);
+            background-color: rgba(239, 68, 68, 0.05);
+        }
+
+        .equip-card.not-required {
+            border-left-color: var(--accent-green);
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+
+        .equip-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .equip-name {
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .equip-reason {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-danger {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .badge-success {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .flow-node {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px dashed var(--border-color);
+        }
+
+        .flow-node-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--text-secondary);
+        }
+
+        .flow-node.active .flow-node-status {
+            background-color: var(--accent-red);
+            box-shadow: 0 0 10px var(--accent-red);
+        }
+
+        .flow-node.passed .flow-node-status {
+            background-color: var(--accent-green);
+        }
+
+        .flow-text {
+            font-size: 0.95rem;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .report-actions button {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>各類場所消防安全設備設置檢討</h1>
+            <p>輸入開發案參數，一鍵生成法規應設消防設備清單</p>
+        </header>
+
+        <div class="grid">
+            <!-- Left Side: Inputs Card -->
+            <div class="card">
+                <h2 class="card-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    開發案基本參數
+                </h2>
+                
+                <form id="calc-form">
+                    <div class="form-group">
+                        <label for="occupancy">場所用途分類</label>
+                        <select id="occupancy" required>
+                            <option value="class-a-ktv">甲類：KTV / 歌廳 / 舞廳 / 酒店</option>
+                            <option value="class-a-restaurant">甲類：餐廳 / 咖啡廳 / 商場</option>
+                            <option value="class-a-hotel">甲類：旅館 / 民宿</option>
+                            <option value="class-a-hospital">甲類：醫院 / 療養院 / 長照機構</option>
+                            <option value="class-b-office" selected>乙類：辦公室 / 事務所</option>
+                            <option value="class-b-apartment">乙類：集合住宅 / 公寓</option>
+                            <option value="class-b-school">乙類：學校 / 補習班</option>
+                            <option value="class-c-factory">丙類：廠房 / 作業廠</option>
+                            <option value="class-d-parking">丁類：室內停車場 / 車庫</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="height">建築物高度 (公尺)</label>
+                        <input type="number" id="height" min="1" max="500" value="15" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stories">地上層數 (層)</label>
+                        <input type="number" id="stories" min="1" max="120" value="5" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="basements">地下層數 (層)</label>
+                        <input type="number" id="basements" min="0" max="10" value="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="total-area">總樓地板面積 (平方公尺)</label>
+                        <input type="number" id="total-area" min="10" max="1000000" value="600" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="specific-area">最大單層樓地板面積 (平方公尺)</label>
+                        <input type="number" id="specific-area" min="10" max="100000" value="150" required>
+                    </div>
+
+                    <div class="checkbox-group" id="windowless-group">
+                        <input type="checkbox" id="is-windowless">
+                        <label for="is-windowless">該場所包含「無窗戶層」</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        進行法規檢討
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Side: Results Card -->
+            <div class="card" id="results-card">
+                <div class="results-placeholder" id="placeholder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                    <h3>等待輸入參數</h3>
+                    <p>請填寫左側建築基本參數，並點擊「進行法規檢討」</p>
+                </div>
+
+                <div class="results-container" id="results-content" style="display: none;">
+                    <h2 class="card-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        應設消防安全設備清單
+                    </h2>
+
+                    <div id="equip-list">
+                        <!-- Dynamic content -->
+                    </div>
+
+                    <h2 class="card-title" style="margin-top: 1.5rem;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                        檢討路徑追蹤
+                    </h2>
+                    
+                    <div class="flowchart" id="flow-list">
+                        <!-- Dynamic content -->
+                    </div>
+
+                    <div class="report-actions">
+                        <button class="btn" style="background-color: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary);" onclick="window.print()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                            列印/匯出 PDF 報告
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calc-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Gather inputs
+            const occupancy = document.getElementById('occupancy').value;
+            const isClassA = occupancy.startsWith('class-a');
+            const isClassC = occupancy === 'class-c-factory';
+            const isClassD = occupancy === 'class-d-parking';
+            
+            const height = parseFloat(document.getElementById('height').value);
+            const stories = parseInt(document.getElementById('stories').value);
+            const basements = parseInt(document.getElementById('basements').value);
+            const totalArea = parseFloat(document.getElementById('total-area').value);
+            const specArea = parseFloat(document.getElementById('specific-area').value);
+            const isWindowless = document.getElementById('is-windowless').checked;
+
+            // Log parameters for debugging
+            console.log({occupancy, height, stories, basements, totalArea, specArea, isWindowless});
+
+            // Evaluation logic
+            const results = [];
+            const flow = [];
+
+            // 1. Extinguisher (滅火器)
+            let extReq = false;
+            let extReason = '';
+            if (isClassA) {
+                extReq = true;
+                extReason = '場所屬甲類，依規強制設置。';
+            } else if (totalArea >= 150) {
+                extReq = true;
+                extReason = `總面積達 ${totalArea} m²（超過非甲類 150 m² 門檻）。`;
+            } else if (isWindowless || basements > 0) {
+                extReq = true;
+                extReason = '含地下層或無窗戶層，且面積達 50 m²。';
+            } else {
+                extReason = `總面積未達 150 m² 且無特定危險樓層。`;
+            }
+            results.push({ name: '滅火器', required: extReq, reason: extReason, code: '第 14 條' });
+            flow.push({ text: `檢討滅火器: ${extReason}`, status: extReq ? 'active' : 'passed' });
+
+            // 2. Indoor Fire Hydrant (室內消防栓)
+            let hydReq = false;
+            let hydReason = '';
+            if (stories >= 6) {
+                hydReq = true;
+                hydReason = `建物樓層數為 ${stories} 層（達 6 層以上，全棟強制設置）。`;
+            } else if (isClassA && (totalArea >= 150 || (isWindowless && totalArea >= 75))) {
+                hydReq = true;
+                hydReason = `甲類場所且總面積達 ${totalArea} m²（超載 150/75 m² 門檻）。`;
+            } else if (!isClassA && !isClassC && !isClassD && (totalArea >= 500 || (isWindowless && totalArea >= 150))) {
+                hydReq = true;
+                hydReason = `乙/戊類場所且總面積達 ${totalArea} m²（超過 500/150 m² 門檻）。`;
+            } else if (isClassC && (totalArea >= 700 || (isWindowless && totalArea >= 150))) {
+                hydReq = true;
+                hydReason = `丙類場所（廠房）且總面積達 ${totalArea} m²（超過 700/150 m² 門檻）。`;
+            } else if (isClassD && (totalArea >= 200 || (isWindowless && totalArea >= 150))) {
+                hydReq = true;
+                hydReason = `丁類場所（車庫）且總面積達 ${totalArea} m²（超過 200/150 m² 門檻）。`;
+            } else if (specArea >= 150) {
+                hydReq = true;
+                hydReason = `單層樓地板面積為 ${specArea} m²（1-5層單層達 150 m² 以上）。`;
+            } else {
+                hydReason = '未達任何消防栓設置之高度、層數或面積標準。';
+            }
+            results.push({ name: '室內消防栓設備', required: hydReq, reason: hydReason, code: '第 15 條' });
+            flow.push({ text: `檢討室內消防栓: ${hydReason}`, status: hydReq ? 'active' : 'passed' });
+
+            // 3. Automatic Sprinkler System (自動撒水設備)
+            let spReq = false;
+            let spReason = '';
+            if (stories >= 11 || height > 31) {
+                spReq = true;
+                spReason = `高層建物（${stories}層 / ${height}公尺），11樓以上或全棟必須裝設。`;
+            } else if (basements > 0 && totalArea >= 1000) {
+                spReq = true;
+                spReason = `含地下層且總面積達 ${totalArea} m²（超過地下層 1,000 m² 門檻）。`;
+            } else if (isClassA && (totalArea >= 1000 || isWindowless)) {
+                spReq = true;
+                spReason = `甲類場所，且面積達 ${totalArea} m²（超過 1,000 m² 或含無窗戶層）。`;
+            } else if (!isClassA && totalArea >= 1500) {
+                spReq = true;
+                spReason = `非甲類場所，且總面積達 ${totalArea} m²（超過 1,500 m² 門檻）。`;
+            } else {
+                spReason = '未達 11 層以上、未超限面積門檻。';
+            }
+            results.push({ name: '自動撒水設備', required: spReq, reason: spReason, code: '第 17 條' });
+            flow.push({ text: `檢討自動撒水: ${spReason}`, status: spReq ? 'active' : 'passed' });
+
+            // 4. Automatic Fire Alarm (火警自動警報設備)
+            let alReq = false;
+            let alReason = '';
+            if (isClassA && (totalArea >= 150 || (isWindowless && totalArea >= 75))) {
+                alReq = true;
+                alReason = `甲類場所，且總面積達 ${totalArea} m²。`;
+            } else if (!isClassA && (totalArea >= 500 || (isWindowless && totalArea >= 150))) {
+                alReq = true;
+                alReason = `非甲類場所，且總面積達 ${totalArea} m²（超過 500/150 m² 門檻）。`;
+            } else if (stories >= 5 && totalArea >= 500) {
+                alReq = true;
+                alReason = `達 5 層樓以上且總面積達 ${totalArea} m²。`;
+            } else {
+                alReason = `未達警報設備設置之最低面積門檻。`;
+            }
+            results.push({ name: '火警自動警報設備', required: alReq, reason: alReason, code: '第 19 條' });
+            flow.push({ text: `檢討火警警報: ${alReason}`, status: alReq ? 'active' : 'passed' });
+
+            // 5. Smoke Exhaust System (排煙設備)
+            let smReq = false;
+            let smReason = '';
+            if (isClassA && specArea >= 300) {
+                smReq = true;
+                smReason = `甲類場所且單層面積達 ${specArea} m²（超過 300 m² 門檻）。`;
+            } else if (isWindowless && specArea >= 50) {
+                smReq = true;
+                smReason = `含無窗戶層且該層面積達 ${specArea} m²（超過 50 m² 門檻）。`;
+            } else if (basements > 0 && totalArea >= 1000) {
+                smReq = true;
+                smReason = `含地下層且總面積達 ${totalArea} m²（超過 1,000 m² 門檻）。`;
+            } else {
+                smReason = '未達排煙設備之單區面積或無窗戶層門檻。';
+            }
+            results.push({ name: '排煙設備', required: smReq, reason: smReason, code: '第 188 條' });
+            flow.push({ text: `檢討防排煙: ${smReason}`, status: smReq ? 'active' : 'passed' });
+
+            // Render Results
+            const listContainer = document.getElementById('equip-list');
+            listContainer.innerHTML = '';
+            results.forEach(res => {
+                const card = document.createElement('div');
+                card.className = `equip-card ${res.required ? 'required' : 'not-required'}`;
+                
+                card.innerHTML = `
+                    <div class="equip-info">
+                        <div class="equip-name">${res.name} <span style="font-size: 0.8rem; color: var(--text-secondary);">(${res.code})</span></div>
+                        <div class="equip-reason">${res.reason}</div>
+                    </div>
+                    <span class="badge ${res.required ? 'badge-danger' : 'badge-success'}">
+                        ${res.required ? '應設置' : '免設置'}
+                    </span>
+                `;
+                listContainer.appendChild(card);
+            });
+
+            // Render Flow Nodes
+            const flowContainer = document.getElementById('flow-list');
+            flowContainer.innerHTML = '';
+            flow.forEach(node => {
+                const item = document.createElement('div');
+                item.className = `flow-node ${node.status}`;
+                item.innerHTML = `
+                    <div class="flow-node-status"></div>
+                    <div class="flow-text">${node.text}</div>
+                `;
+                flowContainer.appendChild(item);
+            });
+
+            // Show results section
+            document.getElementById('placeholder').style.display = 'none';
+            document.getElementById('results-content').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
